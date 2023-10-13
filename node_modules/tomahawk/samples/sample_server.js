@@ -1,0 +1,1 @@
+var app = require('tomahawk').create({port:8080,routes:[__dirname + '/lib/routes']}).start();

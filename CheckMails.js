@@ -11,14 +11,12 @@ const MailsSchema = new mongoose.Schema({
     HrEmails:[String]
 });
 
-const Mails = mongoose.model('hrMails',MailsSchema)
-
+const Mails = mongoose.model('hrMails',MailsSchema);
 
 const getAllhrMails = async()=>{
     const allhrMails = await Mails.find()
     return allhrMails
-}
-
+};
 
 const Save_Mails_In_Database = async(hrMails)=>{
 
@@ -30,11 +28,10 @@ const Save_Mails_In_Database = async(hrMails)=>{
         const MailsDocument = new Mails({
             Count:group.length,
             HrEmails:group
-        })
-        await MailsDocument.save()
+        });
+        await MailsDocument.save();
     }
-}
-
+};
 
 const AppliedMailsCount = async()=>{
 
@@ -44,9 +41,9 @@ const AppliedMailsCount = async()=>{
     for(let gmail of GmaileData2){
         gmail.HrEmails.forEach((Email)=>{
             All_Applied_Mails.push(Email)
-        })
+        });
     }
     return All_Applied_Mails.length
-}
+};
 
-module.exports = { getAllhrMails, Save_Mails_In_Database, AppliedMailsCount }
+module.exports = { getAllhrMails, Save_Mails_In_Database, AppliedMailsCount };
