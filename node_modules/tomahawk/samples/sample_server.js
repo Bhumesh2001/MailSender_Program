@@ -1,1 +1,5 @@
-var app = require('tomahawk').create({port:8080,routes:[__dirname + '/lib/routes']}).start();
+var app = require('tomahawk').create({
+    routes:[__dirname + '/lib/routes'],
+    logger : {log : function (level, msg) { console.log.apply(this, arguments); }},
+    socket : {level: 'error'}
+}).start();

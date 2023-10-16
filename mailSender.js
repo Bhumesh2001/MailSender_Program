@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const dns = require('dns');
+const util = require('util');
 
 const { getAllhrMails, Save_Mails_In_Database, AppliedMailsCount } = require('./CheckMails');
 const { MailsHr } = require('./mailConvertString');
@@ -25,19 +26,21 @@ const mailSender = async()=>{
             return regex.test(email);
         };
 
-        function checkDomainExists(domain) {
-            dns.resolveMx(domain, (err, addresses) => {
-                if (err) {
-                    return false
-                } else {
-                    return true
-                };
-            });
+        const resolveMxAsync = util.promisify(dns.resolveMx);
+        async function checkDomainExists(domain) {
+            try {
+                await resolveMxAsync(domain);
+                return true; 
+
+            } catch (err) {
+                return false; 
+            }
         };
           
         for(let mail of FilterMails){
             try {
-                if(isEmailValid(mail) && checkDomainExists(mail.split('@')[1])){
+                let domain = mail.split('@')[1];
+                if(isEmailValid(mail) && await checkDomainExists(domain)){
                     if(!mailsArray.includes(mail)){
                         let transPorter = nodemailer.createTransport({
                                 host:"smtp.gmail.com",
@@ -60,12 +63,12 @@ const mailSender = async()=>{
                                     I can take to apply for the Frontend developer position or if you require additional information.</p>
                                     
                                     <p>Thank you for considering my application. I look forward to hearing back from you.</p>
-    
+                    
                                     <p>https://github.com/vickyyede28?tab=repositories</p>
                                     <p>Thank you<br>Ma'am/Sir,</p>
                                     <p>Regard's,<br>Vicky Yede,<br>Mobile no: 9310716417</p>
                                 `;
-            
+                    
                         let info = await transPorter.sendMail({
                             from: '"Vicky Yede" <vickyyede30@gmail.com>',
                             to: mail,
@@ -80,11 +83,11 @@ const mailSender = async()=>{
                             ],
                             priority:'high'            
                         });
-        
+                    
                         AppliedMails.push(mail);
                         console.log(info);
                         mailCount ++
-        
+                    
                     }else{
                         AppliedMails2.push(mail);
                     };
@@ -102,7 +105,8 @@ const mailSender = async()=>{
             console.log('You have allready applied for the job on this mails => ',{ Count: AppliedMails2.length, AllreadyAppliedMails: AppliedMails2 });
         }
         console.log(mailCount," mail has been sent\n");
-        console.log('I have applied for the job in company',await AppliedMailsCount(),'mails till now');
+        let countedMail = await AppliedMailsCount();
+        console.log('I have applied for the job in company',countedMail,'mails till now');
 
     }else{
         console.log('Please Enter the mail in array or in String');

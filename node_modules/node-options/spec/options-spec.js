@@ -78,6 +78,13 @@ describe('Testing mergeEnvironment()', function () {
     });
 });
 
+describe('Testing overlayConfig()', function () {
+    it('Expect {"OriginalKey":"original","name":"Bob"} to be {"UnexistingKey":"added","OriginalKey":"replaced", "name":"Bob"}', function () {
+        expect(options.overlayConfig("./overlayConfig.json", {UnexistingKey : 'added', OriginalKey:"replaced",name:"Bob"}, ".dotfile")).toEqual({UnexistingKey:"added",OriginalKey:"replaced",name:"Bob"});
+        expect(options.overlayConfig(process.cwd() + "/overlayConfig.json", {UnexistingKey : 'added', OriginalKey:"replaced",name:"Bob"}, ".dotfile")).toEqual({UnexistingKey:"added",OriginalKey:"replaced",name:"Bob"});
+    });
+});
+
 describe('Testing parse()', function () {
     var config = {"switch":false, file:"file.ext", unittest:"none", one:1, headers:[]};
     it('Expect parse to be {"switch":true, file:"readme.txt", unittest:"none", one:1}', function () {
