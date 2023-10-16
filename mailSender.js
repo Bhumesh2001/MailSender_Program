@@ -8,12 +8,13 @@ const { MailsHr } = require('./mailConvertString');
 
 const mailSender = async()=>{
     const AllHrMails = await getAllhrMails();
-    const mailsArray = [];
+    let mailsArray = [];
     AllHrMails.forEach((document)=>{
         document.HrEmails.forEach((mail)=>{
             mailsArray.push(mail);
         });
     });
+
     if(!MailsHr == ''){
 
         let FilterMails = MailsHr.filter((value,index)=> MailsHr.indexOf(value) === index);
@@ -39,19 +40,19 @@ const mailSender = async()=>{
           
         for(let mail of FilterMails){
             try {
-                let domain = mail.split('@')[1];
-                if(isEmailValid(mail) && await checkDomainExists(domain)){
-                    if(!mailsArray.includes(mail)){
+                if(!mailsArray.includes(mail)){
+                    let domain = mail.split('@')[1];
+                    if(isEmailValid(mail) && await checkDomainExists(domain)){
                         let transPorter = nodemailer.createTransport({
-                                host:"smtp.gmail.com",
-                                port:465,
-                                secure:true,
-                                pool:true,
-                                auth: {
-                                    user: 'vickyyede30@gmail.com',
-                                    pass: 'kxydadnzignhoezd'
-                                }
-                            });
+                            host:"smtp.gmail.com",
+                            port:465,
+                            secure:true,
+                            pool:true,
+                            auth: {
+                                user: 'vickyyede30@gmail.com',
+                                pass: 'kxydadnzignhoezd'
+                            }
+                        });
                         let body = `<p>Hello Ma'am/sir,</p>
                                     <p>I hope this email finds you well. My name is Vicky Yede, and I have completed web development course from navgurukul org at dharamshala(H.P). 
                                     I'm writing to express my interest in the Frontend developer position at your company.</p>
@@ -63,12 +64,12 @@ const mailSender = async()=>{
                                     I can take to apply for the Frontend developer position or if you require additional information.</p>
                                     
                                     <p>Thank you for considering my application. I look forward to hearing back from you.</p>
-                    
+                        
                                     <p>https://github.com/vickyyede28?tab=repositories</p>
                                     <p>Thank you<br>Ma'am/Sir,</p>
                                     <p>Regard's,<br>Vicky Yede,<br>Mobile no: 9310716417</p>
                                 `;
-                    
+                        
                         let info = await transPorter.sendMail({
                             from: '"Vicky Yede" <vickyyede30@gmail.com>',
                             to: mail,
@@ -87,10 +88,10 @@ const mailSender = async()=>{
                         AppliedMails.push(mail);
                         console.log(info);
                         mailCount ++
-                    
-                    }else{
-                        AppliedMails2.push(mail);
+
                     };
+                }else{
+                    AppliedMails2.push(mail);
                 };
 
             } catch (error) {
