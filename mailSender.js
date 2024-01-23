@@ -50,7 +50,7 @@ const mailSender = async () => {
                             pool: true,
                             auth: {
                                 user: '',
-                                pass: ''
+                                pass: '',
                             }
                         });
                         let body = `<p><strong>Hello hiring team,</strong></p>
