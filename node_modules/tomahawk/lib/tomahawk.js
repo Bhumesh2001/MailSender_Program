@@ -102,7 +102,7 @@ module.exports = function () {
                 $this.logger.log('debug', 'plugin[%s]:%j', prop, path.join(thisPluginPath, "package.json"), $this.meta);
                 var pluginPkgConfig = JSON.parse(fs.readFileSync(path.join(thisPluginPath, "package.json")));
                 var pluginImpl = require(path.join(thisPluginPath, pluginPkgConfig.main));
-                $this.config[prop] = pluginImpl($this.app, $this.config, $this.io, $this);
+                config[prop] = $this.config[prop] = pluginImpl($this.app, $this.config, $this.io, $this);
                 if ($this.config[prop] && $this.config[prop].shutdown) {
                     shutdownHooks.push($this.config[prop].shutdown);
                 }

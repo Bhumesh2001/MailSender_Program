@@ -1,45 +1,57 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/Mails').then(()=>{
+mongoose.connect('mongodb://127.0.0.1:27017/Mails').then(() => {
     console.log('Database Connected Successfully...\n');
-}).catch((err)=>{
+}).catch((err) => {
     console.log(err.message);
-})
-
-const MailsSchema = new mongoose.Schema({
-    Count:Number,
-    HrEmails:[String]
 });
 
-const Mails = mongoose.model('hrMails',MailsSchema);
+const MailsSchema = new mongoose.Schema({
+    Count: Number,
+    HrEmails: [String],
+});
 
-const getAllhrMails = async()=>{
+const Mails = mongoose.model('hrmails', MailsSchema);
+
+const getAllhrMails = async () => {
     const allhrMails = await Mails.find();
     return allhrMails;
 };
 
-const Save_Mails_In_Database = async(hrMails)=>{
+const Save_Mails_In_Database = async (hrMails) => {
+
+    for (const newEmail of hrMails) {
+        const mailDocument = await Mails.findOne({ Count: { $lt: 50 } });
+
+        if (mailDocument) {
+            mailDocument.HrEmails.push(newEmail);
+            mailDocument.Count++;
+            await mailDocument.save();
+        } else {
+            break
+        };
+    };
 
     const groupSize = 50;
-    
+
     for (let i = 0; i < hrMails.length; i += groupSize) {
         var group = hrMails.slice(i, i + groupSize);
 
         const MailsDocument = new Mails({
-            Count:group.length,
-            HrEmails:group
+            Count: group.length,
+            HrEmails: group
         });
         await MailsDocument.save();
     };
 };
 
-const AppliedMailsCount = async()=>{
+const AppliedMailsCount = async () => {
 
     let All_Applied_Mails = [];
     const GmaileData2 = await getAllhrMails();
 
-    for(let gmail of GmaileData2){
-        gmail.HrEmails.forEach((Email)=>{
+    for (let gmail of GmaileData2) {
+        gmail.HrEmails.forEach((Email) => {
             All_Applied_Mails.push(Email);
         });
     };
