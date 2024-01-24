@@ -49,8 +49,8 @@ const mailSender = async () => {
                             secure: true,
                             pool: true,
                             auth: {
-                                user: '',
-                                pass: '',
+                                user: 'bhumesh2212001@gmail.com',
+                                pass: 'jnhnzpjkzehbvifk'
                             }
                         });
                         let body = `<p><strong>Hello hiring team,</strong></p>

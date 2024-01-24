@@ -8,7 +8,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/Mails').then(() => {
 
 const MailsSchema = new mongoose.Schema({
     Count: Number,
-    HrEmails: [String],
+    HrEmails: [{
+        type: String,
+        unique: true,
+    }],
 });
 
 const Mails = mongoose.model('hrmails', MailsSchema);
@@ -24,24 +27,35 @@ const Save_Mails_In_Database = async (hrMails) => {
         const mailDocument = await Mails.findOne({ Count: { $lt: 50 } });
 
         if (mailDocument) {
-            mailDocument.HrEmails.push(newEmail);
-            mailDocument.Count++;
-            await mailDocument.save();
+            try {
+                mailDocument.HrEmails.push(newEmail);
+                mailDocument.Count++;
+                await mailDocument.save();
+                hrMails.splice(hrMails.indexOf(newEmail),1);
+            } catch (error) {
+                if (error.name === 'MongoError' && error.code === 11000) {
+                    console.log(`Duplicate entry error: Email ${newEmail} already exists in the array.`);
+                } else {
+                    throw error;
+                };
+            };
         } else {
             break
         };
     };
 
-    const groupSize = 50;
-
-    for (let i = 0; i < hrMails.length; i += groupSize) {
-        var group = hrMails.slice(i, i + groupSize);
-
-        const MailsDocument = new Mails({
-            Count: group.length,
-            HrEmails: group
-        });
-        await MailsDocument.save();
+    if(hrMails.length > 0){
+        const groupSize = 50;
+    
+        for (let i = 0; i < hrMails.length; i += groupSize) {
+            var group = hrMails.slice(i, i + groupSize);
+    
+            const MailsDocument = new Mails({
+                Count: group.length,
+                HrEmails: group,
+            });
+            await MailsDocument.save();
+        };
     };
 };
 
