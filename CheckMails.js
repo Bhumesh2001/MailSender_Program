@@ -27,7 +27,7 @@ const Save_Mails_In_Database = async (hrMails) => {
 
     if (mailDocuments.length > 0) {
         for (const mailDocument of mailDocuments) {
-            const availableSpace = 50 - mailDocument.Count;
+            var availableSpace = 50 - mailDocument.Count;
 
             for (let i = 0; i < Math.min(availableSpace, hrMails.length); i++) {
                 const newEmail = hrMails[i];
