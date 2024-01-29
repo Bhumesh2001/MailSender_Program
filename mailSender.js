@@ -49,8 +49,8 @@ const mailSender = async () => {
                             secure: true,
                             pool: true,
                             auth: {
-                                user: 'bhumesh2212001@gmail.com',
-                                pass: 'jnhnzpjkzehbvifk'
+                                user: '',
+                                pass: ''
                             }
                         });
                         let body = `<p><strong>Hello hiring team,</strong></p>
@@ -104,7 +104,7 @@ const mailSender = async () => {
             };
         };
         if (!AppliedMails.length == 0) {
-            Save_Mails_In_Database(AppliedMails);
+            await Save_Mails_In_Database(AppliedMails);
             console.log('Applied mails saved successfully in the database');
         }
         if (!AppliedMails2.length == 0) {

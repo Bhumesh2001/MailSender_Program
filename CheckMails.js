@@ -23,38 +23,41 @@ const getAllhrMails = async () => {
 
 const Save_Mails_In_Database = async (hrMails) => {
 
-    for (const newEmail of hrMails) {
-        const mailDocument = await Mails.findOne({ Count: { $lt: 50 } });
+    const mailDocuments = await Mails.find({ Count: { $lt: 50 } });
 
-        if (mailDocument) {
-            try {
-                mailDocument.HrEmails.push(newEmail);
-                mailDocument.Count++;
-                await mailDocument.save();
-                hrMails.splice(hrMails.indexOf(newEmail),1);
-            } catch (error) {
-                if (error.name === 'MongoError' && error.code === 11000) {
-                    console.log(`Duplicate entry error: Email ${newEmail} already exists in the array.`);
-                } else {
-                    throw error;
+    if (mailDocuments.length > 0) {
+        for (const mailDocument of mailDocuments) {
+            const availableSpace = 50 - mailDocument.Count;
+
+            for (let i = 0; i < Math.min(availableSpace, hrMails.length); i++) {
+                const newEmail = hrMails[i];
+                try {
+                    mailDocument.HrEmails.push(newEmail);
+                    mailDocument.Count++;
+                } catch (error) {
+                    if (error.name === 'MongoError' && error.code === 11000) {
+                        console.log(`Duplicate entry error: Email ${newEmail} already exists in the array.`);
+                    } else {
+                        throw error;
+                    };
                 };
             };
-        } else {
-            break
+            await mailDocument.save();
         };
-    };
+        hrMails.splice(0, Math.min(hrMails.length, mailDocuments.length * availableSpace));
+    } else {
+        if (hrMails.length > 0) {
+            const groupSize = 50;
 
-    if(hrMails.length > 0){
-        const groupSize = 50;
-    
-        for (let i = 0; i < hrMails.length; i += groupSize) {
-            var group = hrMails.slice(i, i + groupSize);
-    
-            const MailsDocument = new Mails({
-                Count: group.length,
-                HrEmails: group,
-            });
-            await MailsDocument.save();
+            for (let i = 0; i < hrMails.length; i += groupSize) {
+                var group = hrMails.slice(i, i + groupSize);
+
+                const MailsDocument = new Mails({
+                    Count: group.length,
+                    HrEmails: group,
+                });
+                await MailsDocument.save();
+            };
         };
     };
 };
