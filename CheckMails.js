@@ -22,9 +22,7 @@ const getAllhrMails = async () => {
 };
 
 const Save_Mails_In_Database = async (hrMails) => {
-
     const mailDocuments = await Mails.find({ Count: { $lt: 50 } });
-
     if (mailDocuments.length > 0) {
         for (const mailDocument of mailDocuments) {
             var availableSpace = 50 - mailDocument.Count;
