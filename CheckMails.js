@@ -43,8 +43,21 @@ const Save_Mails_In_Database = async (hrMails) => {
                 };
             };
             await mailDocument.save();
+            hrMails.splice(0, Math.min(hrMails.length, mailDocuments.length * availableSpace));
         };
-        hrMails.splice(0, Math.min(hrMails.length, mailDocuments.length * availableSpace));
+        if (hrMails.length > 0) {
+            const groupSize = 50;
+
+            for (let i = 0; i < hrMails.length; i += groupSize) {
+                var group = hrMails.slice(i, i + groupSize);
+
+                const MailsDocument = new Mails({
+                    Count: group.length,
+                    HrEmails: group,
+                });
+                await MailsDocument.save();
+            };
+        };
     } else {
         if (hrMails.length > 0) {
             const groupSize = 50;
