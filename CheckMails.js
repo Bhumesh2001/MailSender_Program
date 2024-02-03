@@ -44,35 +44,27 @@ const Save_Mails_In_Database = async (hrMails) => {
             hrMails.splice(0, Math.min(hrMails.length, mailDocuments.length * availableSpace));
         };
         if (hrMails.length > 0) {
-            const groupSize = 50;
-
-            for (let i = 0; i < hrMails.length; i += groupSize) {
-                var group = hrMails.slice(i, i + groupSize);
-
-                const MailsDocument = new Mails({
-                    Count: group.length,
-                    HrEmails: group,
-                });
-                await MailsDocument.save();
-            };
+            Save_Mails_In_Db(hrMails);
         };
     } else {
         if (hrMails.length > 0) {
-            const groupSize = 50;
+            Save_Mails_In_Db(hrMails);
+        };
+    };
+    async function Save_Mails_In_Db(hrMails) {
+        const groupSize = 50;
 
-            for (let i = 0; i < hrMails.length; i += groupSize) {
-                var group = hrMails.slice(i, i + groupSize);
+        for (let i = 0; i < hrMails.length; i += groupSize) {
+            var group = hrMails.slice(i, i + groupSize);
 
-                const MailsDocument = new Mails({
-                    Count: group.length,
-                    HrEmails: group,
-                });
-                await MailsDocument.save();
-            };
+            const MailsDocument = new Mails({
+                Count: group.length,
+                HrEmails: group,
+            });
+            await MailsDocument.save();
         };
     };
 };
-
 const AppliedMailsCount = async () => {
 
     let All_Applied_Mails = [];
