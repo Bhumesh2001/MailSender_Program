@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "dns": "^0.2.2",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "mongoose": "^8.0.3",
+    "nodemailer": "^6.9.7",
+    "util": "^0.12.5"
+  }
+}
